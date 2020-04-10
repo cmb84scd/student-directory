@@ -85,25 +85,26 @@ def save_students
     puts "nothing to save"
   else
     #open the file for writing
-    file = File.open(@save_file, "w")
+    File.open(@save_file, "w") do |file|
     #iterate over the array of students
-    @students.each do |student|
-      student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
-      file.puts csv_line
+      @students.each do |student|
+        student_data = [student[:name], student[:cohort]]
+        csv_line = student_data.join(",")
+        file.puts csv_line
+      end
     end
-  file.close
+  #file.close
   puts "Student data saved to #{@save_file}"
   end
 end
 
 def load_students(filename = @load_file)
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-    name, cohort = line.chomp.split(",")
-    add_students(name, cohort)
+  File.open(filename, "r") do |file|
+    file.readlines.each do |line|
+      name, cohort = line.chomp.split(",")
+      add_students(name, cohort)
+    end
   end
-  file.close
   if @students.count == 0
     puts "Nothing in file"
   else
