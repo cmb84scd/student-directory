@@ -40,11 +40,15 @@ def input_students
   # while the name is not empty, repeat this code
   while !name.empty? do
     # add the student to hash to the array
-    @students << {name: name, cohort: :november}
+    add_students(name, :november)
     puts "Now we have #{@students.count} students"
     # get another name from the user
     name = STDIN.gets.chomp
   end
+end
+
+def add_students(name, cohort)
+  @students << {name: name, cohort: cohort.to_sym}
 end
 
 def show_students
@@ -73,35 +77,45 @@ def print_footer
 end
 
 def save_students
-  #open the file for writing
-  file = File.open("students.csv", "w")
-  #iterate over the array of students
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
-  end
+  if @students.count == 0
+    puts "nothing to save"
+  else
+    #open the file for writing
+    file = File.open("students.csv", "w")
+    #iterate over the array of students
+    @students.each do |student|
+      student_data = [student[:name], student[:cohort]]
+      csv_line = student_data.join(",")
+      file.puts csv_line
+    end
   file.close
+  puts "Student data saved to students.csv"
+  end
 end
 
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort = line.chomp.split(",")
-    @students << {name: name, cohort: cohort.to_sym}
+    add_students(name, cohort)
   end
   file.close
+  if @students.count == 0
+    puts "Nothing in file"
+  else
+    puts "Student data loaded"
+  end
 end
 
 def try_load_students
   filename = ARGV.first # first agrument from the command line
   return if filename.nil? # get out of the method if it isn't given
-  if File.exists?(filename) # if it exists
+  if File.exists?(filename)
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}"
-  else # if it doesn't exist
+  else
     puts "Sorry, #{filename} doesn't exist."
-    exit # quit the program
+    exit
   end
 end
 
