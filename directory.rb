@@ -1,3 +1,5 @@
+require 'csv'
+
 @students = [] # an empty array accessible to all methods
 
 def print_menu
@@ -5,7 +7,7 @@ def print_menu
   puts "2. Show the students"
   puts "3. Save the list to students.csv"
   puts "4. Load the list from students.csv"
-  puts "9. Exit"
+  puts "5. Exit"
 end
 
 def interactive_menu
@@ -29,7 +31,7 @@ def process(selection)
     puts "What file do you want to open?"
     @load_file = STDIN.gets.chomp
     load_students
-  when "9"
+  when "5"
     exit
   else
     puts "I don't know what you meant, try again"
@@ -84,26 +86,19 @@ def save_students
   if @students.count == 0
     puts "nothing to save"
   else
-    #open the file for writing
-    File.open(@save_file, "w") do |file|
-    #iterate over the array of students
+    CSV.open(@save_file, "w") do |file|
       @students.each do |student|
-        student_data = [student[:name], student[:cohort]]
-        csv_line = student_data.join(",")
-        file.puts csv_line
+        file << [student[:name], student[:cohort]]
       end
     end
-  #file.close
   puts "Student data saved to #{@save_file}"
   end
 end
 
 def load_students(filename = @load_file)
-  File.open(filename, "r") do |file|
-    file.readlines.each do |line|
-      name, cohort = line.chomp.split(",")
-      add_students(name, cohort)
-    end
+  CSV.foreach(filename) do |line|
+    name, cohort = line[0], line[1]
+    add_students(name, cohort)
   end
   if @students.count == 0
     puts "Nothing in file"
