@@ -47,7 +47,7 @@ def input_students
   while !name.empty? do
     # add the student to hash to the array
     add_students(name, :november)
-    puts "Now we have #{@students.count} students"
+    puts "Now we have #{@students.count} #{plural}"
     # get another name from the user
     name = STDIN.gets.chomp
   end
@@ -55,6 +55,10 @@ end
 
 def add_students(name, cohort)
   @students << {name: name, cohort: cohort.to_sym}
+end
+
+def plural
+  @students.count == 1 ? "student" : "students"
 end
 
 def show_students
@@ -79,7 +83,7 @@ def print_student_list
 end
 
 def print_footer
-  puts "Overall, we have #{@students.count} great students"
+  puts "Overall, we have #{@students.count} great #{plural}"
 end
 
 def save_students
